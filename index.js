@@ -96,7 +96,7 @@ app.post("/upload_photos", function(req, res) {
       filename = Date.now() + "." + type.ext;
 
       // Move the file with the new file name
-      fs.rename(file.path, path.join(__dirname, "uploads/" + filename));
+      fs.rename(file.path, path.join(__dirname, "uploads/" + filename), function(){});
       var process = spawn('python3',["./ml.py", filename] ); 
       process.stdout.on('data', function(data) { 
         console.log(data.toString(), 'data')
