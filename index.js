@@ -9,7 +9,7 @@ var spawn = require("child_process").spawn;
 
 var app = express();
 
-app.set("port", process.env.PORT || 5000);
+app.set("port", 3000);
 
 // Tell express to serve static files from the following directories
 app.use(express.static("public"));
