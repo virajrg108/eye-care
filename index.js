@@ -38,7 +38,7 @@ app.get("/", function(req, res) {
           days = Math.round((Date.now() - createdAt) / (1000 * 60 * 60 * 24));
 
         if (days > 1) {
-          fs.unlink(filesPath + file);
+          fs.unlink(filesPath + file, function(){console.log(" ")});
         }
       });
     });
