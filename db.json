@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "pass": "123",
+      "role": "admin"
+    },
+    {
+      "username": "doctor1",
+      "pass": "345",
+      "role": "doctor"
+    },
+    {
+      "username": "tech1",
+      "pass": "678",
+      "role": "tech"
+    }
+  ],
+  "apmts": []
+}

@@ -31,7 +31,8 @@ function uploadFiles(formData) {
     }
   })
     .done(function(data) {
-        $("#result").attr("src", "img/"+data);
+      $("#result").attr("src", "img/" + data);
+      alert("New patient ID is:" + data.slice(2, 15));
     })
     .fail(function(xhr, status) {
       alert(status);

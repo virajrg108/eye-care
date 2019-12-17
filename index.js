@@ -4,11 +4,16 @@ var express = require("express"),
   formidable = require("formidable"),
   readChunk = require("read-chunk"),
   fileType = require("file-type");
-
+var bodyParser = require("body-parser");
 var spawn = require("child_process").spawn;
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+ 
+const adapter = new FileSync('db.json')
+const db = low(adapter)
 
 var app = express();
-
+db.defaults({ users: [{username:'admin', pass:'123', role:"admin"}, {username:'doctor1', pass:"345", role:"doctor"}, {username:'tech1', pass:"678", role:"tech"}], apmts:[]}).write()
 app.set("port", 3000);
 
 // Tell express to serve static files from the following directories
@@ -38,7 +43,9 @@ app.get("/", function(req, res) {
           days = Math.round((Date.now() - createdAt) / (1000 * 60 * 60 * 24));
 
         if (days > 1) {
-          fs.unlink(filesPath + file, function(){console.log(" ")});
+          fs.unlink(filesPath + file, function() {
+            console.log(" ");
+          });
         }
       });
     });
@@ -47,15 +54,30 @@ app.get("/", function(req, res) {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+app.get('/login', function(req, res) {
+  var data = db.get('users').find(req.query).value();
+  if (data && data.length!=0)
+    res.send(data.role);
+  else
+    res.sendStatus(404);
+});
+
+app.get("/technician.html", function(req, res) {
+  res.sendFile(path.join(__dirname, "/technician.html"));
+});
+app.get("/doctor.html", function(req, res) {
+  res.sendFile(path.join(__dirname, "/doctor.html"));
+});
+
 app.get("/js/:id", function(req, res) {
-  res.sendFile(path.join(__dirname, "js/"+req.params.id));
+  res.sendFile(path.join(__dirname, "js/" + req.params.id));
 });
 app.get("/manifest.json", function(req, res) {
   res.sendFile(path.join(__dirname, "manifest.json"));
 });
 
 app.get("/img/:id", function(req, res) {
-  res.sendFile(path.join(__dirname, "img/"+req.params.id));
+  res.sendFile(path.join(__dirname, "img/" + req.params.id));
 });
 
 /**
@@ -74,7 +96,9 @@ app.post("/upload_photos", function(req, res) {
   form.on("file", function(name, file) {
     // Allow only 3 files to be uploaded.
     if (photos.length === 3) {
-      fs.unlink(file.path, function(){console.log('Deleted avatar')});
+      fs.unlink(file.path, function() {
+        console.log("Deleted avatar");
+      });
       return true;
     }
 
@@ -96,12 +120,16 @@ app.post("/upload_photos", function(req, res) {
       filename = Date.now() + "." + type.ext;
 
       // Move the file with the new file name
-      fs.rename(file.path, path.join(__dirname, "uploads/" + filename), function(){});
-      var process = spawn('python3',["./ml.py", filename] ); 
-      process.stdout.on('data', function(data) { 
-        console.log(data.toString(), 'data')
+      fs.rename(
+        file.path,
+        path.join(__dirname, "uploads/" + filename),
+        function() {}
+      );
+      var process = spawn("python3", ["./ml.py", filename]);
+      process.stdout.on("data", function(data) {
+        console.log(data.toString(), "data");
         res.status(200).send(data.toString());
-      }) 
+      });
       // Add to the list of photos
       photos.push({
         status: true,
