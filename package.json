@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "file-type": "^12.4.0",
+    "file-type": "^16.5.4",
     "formidable": "^1.2.1",
     "lowdb": "^1.0.0",
     "multer": "^1.4.2",
